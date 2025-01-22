@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quadratic Equation Solver</title>
+    <script src="https://cdn.jsdelivr.net/npm/eruda" onload="eruda.init();"></script>
+  </head>
+  <body>
+    <div id="app">
+      <h1 style="font-size: 4rem; font-weight: 400">Quadratic Equation Solver</h1>
+      <input type="number" value="1" disabled style="display: none" id="a" />
+      <math>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>+</mo>
+      </math>
+      <input type="number" placeholder="b" id="b" autocomplete="off" />
+      <math>
+        <mi>x</mi>
+        <mo>+</mo>
+      </math>
+      <input type="number" id="c" placeholder="c" /><math><mo>=</mo></math>
+      <input type="number" id="d" placeholder="d" value="0" />
+      <button id="solve-button">Solve</button>
+      <br />
+      <div id="output"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
