@@ -1,7 +1,6 @@
 # Quadratic Equation Solver
 
-Solves a quadratic equation in the form of $x^2+bx+c=d$ by completing the square.
-In the future, $ax^2+bx+c=d$ (`a` will be supported)
+Solves a quadratic equation in the form of $ax^2+bx+c=d$ by completing the square.
 
 # How to use
 

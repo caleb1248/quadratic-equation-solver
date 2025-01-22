@@ -9,7 +9,7 @@
   <body>
     <div id="app">
       <h1 style="font-size: 4rem; font-weight: 400">Quadratic Equation Solver</h1>
-      <input type="number" value="1" disabled style="display: none" id="a" />
+      <input type="number" id="a" placeholder="a" style="margin-right: -5px;" autocomplete="off"/>
       <math>
         <msup>
           <mi>x</mi>
@@ -22,8 +22,8 @@
         <mi>x</mi>
         <mo>+</mo>
       </math>
-      <input type="number" id="c" placeholder="c" /><math><mo>=</mo></math>
-      <input type="number" id="d" placeholder="d" value="0" />
+      <input type="number" id="c" placeholder="c" autocomplete="off"/><math><mo>=</mo></math>
+      <input type="number" id="d" placeholder="d" value="0" autocomplete="off"/>
       <button id="solve-button">Solve</button>
       <br />
       <div id="output"></div>

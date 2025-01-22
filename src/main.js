@@ -6,19 +6,29 @@ const { renderToString } = temml;
  * Solves equations in the form ax^2+bx+c=d. `a` is currently not supported and is equivalent to 1
  */
 function* solve(
-  /**@type {number}*/ _a,
+  /**@type {number}*/ a,
   /**@type {number}*/ b,
   /**@type {number}*/ c,
   /**@type {number}*/ d
 ) {
+  if(a === 0) {
+    yield "<span style='color:red'>Error: cannot divide by 0</span>";
+    return;
+  }
+  
+  yield "Your Equation: " + renderToString(`${a===1?"":a}x^2+${b}x+${c}=${d}`);
+  yield "<h3 style='margin-bottom:-1rem;font-weight:400'>Steps</h3>";
+  b/=a;
+  c/=a;
+  d/=a;
   const bOver2 = b / 2;
   const bOver2Squared = bOver2 * bOver2;
   const difference = bOver2Squared - c;
   const newD = d + difference;
-  yield "Your Equation: " + renderToString(`x^2+${b}x+${c}=${d}`);
-  yield "<h3 style='margin-bottom:-1rem;font-weight:400'>Steps</h3>";
+  yield renderToString(`x^2+${b}x+${c}=${d}`);
   yield renderToString(`x^2+${b}x+${bOver2Squared}=${newD}`);
   yield renderToString(`(x${bOver2 < 0 ? "-" : "+"}${Math.abs(bOver2)})^2=${newD}`);
+
   if (newD === 0) {
     yield renderToString(`x${bOver2 < 0 ? "-" : "+"}${Math.abs(bOver2)}=${newD}`);
     ("<h3 style='margin-bottom:-1rem;font-weight:400'>Solution</h3>");
@@ -49,8 +59,10 @@ for (const elem of document.querySelectorAll("input")) {
 }
 
 document.getElementById("solve-button").addEventListener("click", (e) => {
-  const a = parseInt(document.getElementById("a").value);
-  const b = parseInt(document.getElementById("b").value || 1);
+  const aValue = document.getElementById("a").value;
+  const a = aValue.length?parseInt(aValue):1;
+  const bValue = document.getElementById("b").value;
+  const b = bValue.length?parseInt(bValue):1
   const c = parseInt(document.getElementById("c").value || 0);
   const d = parseInt(document.getElementById("d").value || 0);
   if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)) {

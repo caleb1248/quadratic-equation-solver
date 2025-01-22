@@ -95,6 +95,7 @@ input {
   background: inherit;
   font-size: 1.7rem;
   min-width: 15px;
+  z-index: 99;
 }
 
 input::-webkit-outer-spin-button,
