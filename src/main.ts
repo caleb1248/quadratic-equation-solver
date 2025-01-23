@@ -67,7 +67,17 @@ function* solveWithA(a: number, b: number, c: number, d: number) {
   d += difference;
 
   yield renderToString(`${a}x^2+${b}x+${newC}=${d}`);
-  yield renderToString(`(${oldA}x+${bOver2A})^2=${d}`);
+  yield renderToString(`(${oldA}x${bOver2A < 0 ? "-" : "+"}${Math.abs(bOver2A)})^2=${d}`);
+  const sqrtD = Math.sqrt(d);
+  yield renderToString(`${oldA}x${bOver2A < 0 ? "-" : "+"}${Math.abs(bOver2A)}=\\pm\\sqrt{${d}}`);
+  yield renderToString(`${oldA}x=${bOver2A}\\pm\\sqrt{${d}}`);
+  yield renderToString(`x=\\frac{${-bOver2A}\\pm\\sqrt{${d}}}{${oldA}}`);
+  const solutions = [(-bOver2A+sqrtD)/oldA, (-bOver2A-sqrtD)/oldA].map(ans => Math.round(ans*1000)/1000);
+  yield "<div><h3 style='margin-bottom:0;font-weight:400'>Solutions</h3>" +
+      renderToString(`x=${solutions[0]}`) +
+      " or " +
+      renderToString(`x=${solutions[1]}`) +
+      "</div>";
 }
 
 for (const elem of Array.from(document.querySelectorAll("input"))) {
