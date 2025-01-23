@@ -2,25 +2,18 @@ import "./style.css";
 import "./latinmodernmath.woff2";
 import temml from "temml";
 const { renderToString } = temml;
+
+const aInput = document.getElementById("a") as HTMLInputElement;
+const bInput = document.getElementById("b") as HTMLInputElement;
+const cInput = document.getElementById("c") as HTMLInputElement;
+const dInput = document.getElementById("d") as HTMLInputElement;
 /**
  * Solves equations in the form ax^2+bx+c=d. `a` is currently not supported and is equivalent to 1
  */
-function* solve(
-  /**@type {number}*/ a,
-  /**@type {number}*/ b,
-  /**@type {number}*/ c,
-  /**@type {number}*/ d
-) {
-  if(a === 0) {
-    yield "<span style='color:red'>Error: cannot divide by 0</span>";
-    return;
-  }
-  
-  yield "Your Equation: " + renderToString(`${a===1?"":a}x^2+${b}x+${c}=${d}`);
+function* solve(b: number, c: number, d: number): Generator<string, void, string> {
+  yield "Your Equation: " + renderToString(`x^2+${b}x+${c}=${d}`);
   yield "<h3 style='margin-bottom:-1rem;font-weight:400'>Steps</h3>";
-  b/=a;
-  c/=a;
-  d/=a;
+
   const bOver2 = b / 2;
   const bOver2Squared = bOver2 * bOver2;
   const difference = bOver2Squared - c;
@@ -50,7 +43,34 @@ function* solve(
   }
 }
 
-for (const elem of document.querySelectorAll("input")) {
+function* solveWithA(a: number, b: number, c: number, d: number) {
+  yield "Your Equation: " + renderToString(`${a}x^2+${b}x+${c}=${d}`);
+  yield "<h3 style='margin-bottom:-1rem;font-weight:400'>Steps</h3>";
+
+  if (a === 0) {
+    yield "<span style='color:red'>Error: cannot divide by 0</span>";
+    return;
+  }
+
+  const oldA = a;
+  const oldB = b;
+  a *= oldA;
+  b *= oldA;
+  c *= oldA;
+  d *= oldA;
+
+  yield renderToString(`${a}x^2+${b}x+${c}=${d}`);
+
+  const bOver2A = oldB / 2; // Same as b/(2a)
+  const newC = bOver2A * bOver2A;
+  const difference = newC - c;
+  d += difference;
+
+  yield renderToString(`${a}x^2+${b}x+${newC}=${d}`);
+  yield renderToString(`(${oldA}x+${bOver2A})^2=${d}`);
+}
+
+for (const elem of Array.from(document.querySelectorAll("input"))) {
   elem.style.width = "0";
   elem.addEventListener("input", () => {
     elem.style.width = "0";
@@ -59,19 +79,25 @@ for (const elem of document.querySelectorAll("input")) {
 }
 
 document.getElementById("solve-button").addEventListener("click", (e) => {
-  const aValue = document.getElementById("a").value;
-  const a = aValue.length?parseInt(aValue):1;
-  const bValue = document.getElementById("b").value;
-  const b = bValue.length?parseInt(bValue):1
-  const c = parseInt(document.getElementById("c").value || 0);
-  const d = parseInt(document.getElementById("d").value || 0);
+  const aValue = aInput.value;
+  const a = aValue.length ? parseInt(aValue) : 1;
+  const bValue = bInput.value;
+  const b = bValue.length ? parseInt(bValue) : 1;
+  const c = parseInt(cInput.value || "0");
+  const d = parseInt(dInput.value || "");
   if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d)) {
     return;
   }
 
   const outputDiv = document.getElementById("output");
   outputDiv.innerHTML = "<hr>";
-  for (const output of solve(a, b, c, d)) {
-    outputDiv.innerHTML += output + "<br>";
+  if (a === 1) {
+    for (const output of solve(b, c, d)) {
+      outputDiv.innerHTML += output + "<br>";
+    }
+  } else {
+    for (const output of solveWithA(a, b, c, d)) {
+      outputDiv.innerHTML += output + "<br>";
+    }
   }
 });
