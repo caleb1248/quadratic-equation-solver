@@ -7,6 +7,14 @@ const aInput = document.getElementById("a") as HTMLInputElement;
 const bInput = document.getElementById("b") as HTMLInputElement;
 const cInput = document.getElementById("c") as HTMLInputElement;
 const dInput = document.getElementById("d") as HTMLInputElement;
+
+/**
+ * Rounds a number to the nearest 1000th for display purposes
+ */
+function round(num: number) {
+  return Math.round(num * 1000) / 1000;
+}
+
 /**
  * Solves equations in the form ax^2+bx+c=d. `a` is currently not supported and is equivalent to 1
  */
@@ -72,12 +80,37 @@ function* solveWithA(a: number, b: number, c: number, d: number) {
   yield renderToString(`${oldA}x${bOver2A < 0 ? "-" : "+"}${Math.abs(bOver2A)}=\\pm\\sqrt{${d}}`);
   yield renderToString(`${oldA}x=${bOver2A}\\pm\\sqrt{${d}}`);
   yield renderToString(`x=\\frac{${-bOver2A}\\pm\\sqrt{${d}}}{${oldA}}`);
-  const solutions = [(-bOver2A+sqrtD)/oldA, (-bOver2A-sqrtD)/oldA].map(ans => Math.round(ans*1000)/1000);
+  const solutions = [(-bOver2A + sqrtD) / oldA, (-bOver2A - sqrtD) / oldA].map(round);
   yield "<div><h3 style='margin-bottom:0;font-weight:400'>Solutions</h3>" +
-      renderToString(`x=${solutions[0]}`) +
-      " or " +
-      renderToString(`x=${solutions[1]}`) +
-      "</div>";
+    renderToString(`x=${solutions[0]}`) +
+    " or " +
+    renderToString(`x=${solutions[1]}`) +
+    "</div>";
+}
+
+function* solveWithQuadraticFormula(a: number, b: number, c: number, d: number) {
+  c -= d;
+  yield renderToString(`${a}x^2+${b}x+${c}=0`);
+  //
+  yield renderToString(`x=\\frac{-(${b})\\pm\\sqrt{(${b})^2-4(${a})(${c})}}{2(${a})}`);
+  const bSquared = b * b;
+  const fourAC = 4 * a * c;
+
+  yield renderToString(
+    `x=\\frac{${-b}\\pm\\sqrt{${bSquared}${fourAC < 0 ? "+" : "-"}${Math.abs(fourAC)}}}{${2 * a}}`
+  );
+
+  yield renderToString(`x=\\frac{${-b}\\pm\\sqrt{${bSquared - fourAC}}}{${2 * a}}`);
+
+  const theSquareRoot = Math.sqrt(bSquared - fourAC);
+  yield renderToString(`x=\\frac{${-b}\\pm${round(theSquareRoot)}}{${2 * a}}`);
+  yield renderToString(`x=\\frac{${round(-b + theSquareRoot)}}{${2 * a}}`) +
+    " or " +
+    renderToString(`x=\\frac{${round(-b - theSquareRoot)}}{${2 * a}}`);
+
+  yield renderToString(`x=${round((-b + theSquareRoot) / (2 * a))}`) +
+    " or " +
+    renderToString(`x=${round((-b - theSquareRoot) / (2 * a))}`);
 }
 
 for (const elem of Array.from(document.querySelectorAll("input"))) {
@@ -109,5 +142,10 @@ document.getElementById("solve-button").addEventListener("click", (e) => {
     for (const output of solveWithA(a, b, c, d)) {
       outputDiv.innerHTML += output + "<br>";
     }
+  }
+
+  outputDiv.innerHTML += "<h3 style='margin-bottom:0;font-weight:400'>Quadratic Formula</h3>";
+  for (const output of solveWithQuadraticFormula(a, b, c, d)) {
+    outputDiv.innerHTML += output + "<div style='height:20px'></div>";
   }
 });
